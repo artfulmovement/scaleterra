@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Scaleterra — keep the margin your restaurant already earns</title>
+<meta name="description" content="Scaleterra reads what your restaurant already runs on and finds the margin leaking out. Then we help you keep it. No new system to learn." />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Hanken+Grotesk:wght@400..700&family=Spline+Sans+Mono:wght@400..600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    /* Committed fired-clay palette, OKLCH. Mood lives in the brand color + type, not the bg. */
+    --bg:        oklch(1 0 0);
+    --surface:   oklch(0.985 0.006 70);
+    --ink:       oklch(0.24 0.02 44);
+    --muted:     oklch(0.50 0.02 44);
+    --clay:      oklch(0.53 0.145 42);
+    --clay-deep: oklch(0.31 0.085 36);
+    --clay-abyss:oklch(0.22 0.055 34);
+    --ochre:     oklch(0.76 0.135 70);
+    --cream:     oklch(0.96 0.022 78);
+    --cream-dim: oklch(0.82 0.03 74);
+    --line:      oklch(0.90 0.012 60);
+
+    --z-sticky: 100; --z-nav: 200;
+
+    --step--1: clamp(0.83rem, 0.8rem + 0.15vw, 0.92rem);
+    --step-0:  clamp(1rem, 0.95rem + 0.25vw, 1.15rem);
+    --step-1:  clamp(1.3rem, 1.2rem + 0.5vw, 1.6rem);
+    --step-2:  clamp(1.9rem, 1.6rem + 1.4vw, 2.6rem);
+    --step-4:  clamp(2.9rem, 2.1rem + 3.6vw, 5.4rem);
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:"Hanken Grotesk",system-ui,sans-serif;
+    font-size:var(--step-0); line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+    font-feature-settings:"ss01","tnum" 0;
+  }
+  h1,h2,h3{font-family:"Bricolage Grotesque",system-ui,sans-serif; line-height:1.02; letter-spacing:-0.03em; text-wrap:balance; font-weight:750}
+  p{text-wrap:pretty}
+  .mono{font-family:"Spline Sans Mono",ui-monospace,monospace; font-feature-settings:"tnum"}
+  a{color:inherit; text-decoration:none}
+  .wrap{width:min(1180px,92vw); margin-inline:auto}
+
+  /* ---------- nav ---------- */
+  nav{position:sticky; top:0; z-index:var(--z-nav);
+    background:color-mix(in oklab, var(--clay-abyss) 88%, transparent);
+    backdrop-filter:blur(10px); border-bottom:1px solid color-mix(in oklab,var(--cream) 12%, transparent)}
+  .nav-in{display:flex; align-items:center; justify-content:space-between; gap:2rem; padding:0.9rem 0}
+  .brand{display:flex; align-items:center; gap:0.6rem; color:var(--cream)}
+  .brand svg{width:34px; height:34px; display:block}
+  .brand b{font-family:"Bricolage Grotesque"; font-weight:700; font-size:1.28rem; letter-spacing:-0.03em}
+  .nav-links{display:flex; align-items:center; gap:1.7rem}
+  .nav-links a{color:var(--cream-dim); font-size:var(--step--1); font-weight:500; transition:color .2s}
+  .nav-links a:hover{color:var(--cream)}
+  .btn{display:inline-flex; align-items:center; gap:.45rem; font-weight:600; font-size:var(--step--1);
+    padding:.7rem 1.15rem; border-radius:9px; transition:transform .18s cubic-bezier(.2,.8,.2,1), background .2s, box-shadow .2s; will-change:transform}
+  .btn-primary{background:var(--ochre); color:var(--clay-abyss); box-shadow:0 1px 0 color-mix(in oklab,var(--ink) 20%,transparent)}
+  .btn-primary:hover{transform:translateY(-2px); box-shadow:0 10px 24px -12px oklch(0.76 0.135 70 / .8)}
+  .btn-ghost{border:1px solid color-mix(in oklab,var(--cream) 28%,transparent); color:var(--cream)}
+  .btn-ghost:hover{background:color-mix(in oklab,var(--cream) 10%,transparent)}
+  .nav-links .btn-ghost{color:var(--cream)}
+
+  /* ---------- hero (clay drench) ---------- */
+  .hero{position:relative; background:
+      radial-gradient(120% 90% at 88% -10%, var(--clay) 0%, transparent 46%),
+      linear-gradient(180deg, var(--clay-deep) 0%, var(--clay-abyss) 100%);
+    color:var(--cream); overflow:hidden}
+  .hero::after{content:""; position:absolute; inset:0; pointer-events:none;
+    background:radial-gradient(60% 50% at 12% 108%, oklch(0.76 0.135 70 / .16), transparent 60%)}
+  .hero-grid{display:grid; grid-template-columns:1.15fr .85fr; gap:clamp(1.5rem,4vw,4rem); align-items:center;
+    padding:clamp(3.2rem,7vw,6rem) 0 clamp(3rem,6vw,5rem)}
+  .kicker{display:inline-flex; align-items:center; gap:.5rem; color:var(--cream-dim);
+    font-size:var(--step--1); font-weight:500; margin-bottom:1.4rem}
+  .kicker .dot{width:7px;height:7px;border-radius:50%;background:var(--ochre)}
+  h1{font-size:var(--step-4); color:var(--cream); max-width:16ch}
+  h1 em{font-style:normal; color:var(--ochre)}
+  .sub{margin-top:1.5rem; font-size:var(--step-1); line-height:1.5; color:var(--cream-dim); max-width:46ch; font-weight:400}
+  .cta-row{display:flex; flex-wrap:wrap; gap:.8rem; margin-top:2.1rem}
+  .cta-row .btn{padding:.85rem 1.4rem; font-size:var(--step-0)}
+  .proof-chip{margin-top:2.2rem; display:inline-flex; align-items:baseline; gap:.7rem; flex-wrap:wrap;
+    padding:.7rem 1rem; border-radius:11px; background:color-mix(in oklab,var(--clay-abyss) 60%,transparent);
+    border:1px solid color-mix(in oklab,var(--cream) 14%,transparent)}
+  .proof-chip .who{font-size:var(--step--1); color:var(--cream-dim)}
+  .proof-chip .num{font-size:var(--step-0); color:var(--cream); font-weight:600}
+  .proof-chip .num s{color:var(--cream-dim); text-decoration-thickness:1.5px}
+
+  .hero-media{position:relative; border-radius:16px; overflow:hidden; aspect-ratio:4/5;
+    box-shadow:0 40px 80px -40px oklch(0.15 0.05 34 / .9); transform:rotate(1.2deg)}
+  .hero-media img{width:100%; height:100%; object-fit:cover; display:block; filter:saturate(1.05) contrast(1.02)}
+  .hero-media::after{content:""; position:absolute; inset:0;
+    background:linear-gradient(160deg, transparent 30%, oklch(0.22 0.055 34 / .55) 100%),
+    linear-gradient(0deg, var(--clay) 0%, transparent 34%); mix-blend-mode:multiply; opacity:.55}
+  .hero-tag{position:absolute; left:14px; bottom:14px; z-index:2; padding:.5rem .8rem; border-radius:9px;
+    background:color-mix(in oklab,var(--clay-abyss) 78%,transparent); backdrop-filter:blur(4px);
+    color:var(--cream); font-size:.78rem; font-weight:500; letter-spacing:.01em}
+
+  /* ---------- proof band ---------- */
+  .proof{background:var(--bg); padding:clamp(3.5rem,8vw,6.5rem) 0}
+  .proof h2{font-size:var(--step-2); max-width:20ch}
+  .proof h2 b{color:var(--clay); font-weight:750}
+  .proof .lead{margin-top:1rem; color:var(--muted); max-width:52ch; font-size:var(--step-1); font-weight:400}
+  .chart{margin-top:2.8rem; display:grid; grid-template-columns:repeat(5,1fr); gap:clamp(.6rem,2vw,1.4rem); align-items:end;
+    max-width:640px; height:clamp(150px,26vw,220px)}
+  .bar{position:relative; display:flex; flex-direction:column; justify-content:flex-end; height:100%}
+  .bar .col{width:100%; border-radius:7px 7px 3px 3px; background:linear-gradient(180deg,var(--clay),var(--clay-deep));
+    transform-origin:bottom; animation:grow .9s cubic-bezier(.2,.8,.2,1) both}
+  .bar:first-child .col{background:linear-gradient(180deg,var(--clay-abyss),var(--clay-abyss))}
+  .bar:last-child .col{background:linear-gradient(180deg,var(--ochre),var(--clay))}
+  .bar .v{font-family:"Spline Sans Mono"; font-size:var(--step--1); font-weight:500; color:var(--ink); text-align:center; margin-bottom:.5rem}
+  .bar .m{font-family:"Spline Sans Mono"; font-size:.72rem; color:var(--muted); text-align:center; margin-top:.6rem}
+  .chart-note{margin-top:1.4rem; font-size:var(--step--1); color:var(--muted)}
+  .chart-note b{color:var(--clay); font-weight:600}
+
+  /* ---------- how ---------- */
+  .how{background:var(--clay-abyss); color:var(--cream); padding:clamp(3.5rem,8vw,6rem) 0}
+  .how h2{font-size:var(--step-2); color:var(--cream); max-width:18ch}
+  .steps{margin-top:2.6rem; display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:clamp(1.4rem,3vw,2.4rem)}
+  .step .n{font-family:"Spline Sans Mono"; font-size:.85rem; color:var(--ochre); font-weight:600; letter-spacing:.02em}
+  .step h3{font-size:var(--step-1); color:var(--cream); margin:.7rem 0 .5rem; font-weight:700; letter-spacing:-.02em}
+  .step p{color:var(--cream-dim); font-size:var(--step-0)}
+  .step{padding-top:1.1rem; border-top:1px solid color-mix(in oklab,var(--cream) 16%,transparent)}
+
+  /* ---------- footer ---------- */
+  footer{background:var(--bg); padding:clamp(3rem,6vw,4.5rem) 0 2.5rem}
+  .foot-cta{display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:1.5rem;
+    padding:clamp(1.8rem,4vw,2.6rem); border-radius:18px; background:var(--surface); border:1px solid var(--line)}
+  .foot-cta h2{font-size:var(--step-2); max-width:16ch}
+  .foot-cta .btn-primary{background:var(--clay); color:var(--cream)}
+  .foot-cta .btn-primary:hover{box-shadow:0 12px 26px -12px oklch(0.53 0.145 42 / .8)}
+  .foot-meta{display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; margin-top:2.4rem; color:var(--muted); font-size:var(--step--1)}
+  .foot-meta .brand b{color:var(--ink)}
+
+  /* ---------- motion ---------- */
+  .rise{opacity:0; transform:translateY(18px); animation:rise .8s cubic-bezier(.2,.8,.2,1) forwards}
+  .d1{animation-delay:.05s}.d2{animation-delay:.15s}.d3{animation-delay:.28s}.d4{animation-delay:.4s}
+  @keyframes rise{to{opacity:1; transform:none}}
+  @keyframes grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+  @media (prefers-reduced-motion:reduce){
+    .rise,.bar .col{animation:none; opacity:1; transform:none}
+    html{scroll-behavior:auto}
+  }
+
+  /* ---------- responsive ---------- */
+  @media (max-width:860px){
+    .hero-grid{grid-template-columns:1fr}
+    .hero-media{order:-1; aspect-ratio:16/10; transform:none; max-height:300px}
+    .nav-links a:not(.btn){display:none}
+  }
+</style>
+</head>
+<body>
+
+<!-- reusable logo mark: terraced strata rising to a lit peak (scale + terra) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <g id="mark">
+    <rect x="3"  y="30" width="42" height="8" rx="4" fill="oklch(0.53 0.145 42)"/>
+    <rect x="9"  y="20" width="30" height="8" rx="4" fill="oklch(0.65 0.14 54)"/>
+    <rect x="15" y="10" width="18" height="8" rx="4" fill="oklch(0.76 0.135 70)"/>
+  </g>
+</defs></svg>
+
+<nav>
+  <div class="wrap nav-in">
+    <a class="brand" href="#" aria-label="Scaleterra home">
+      <svg viewBox="0 0 48 48"><use href="#mark"/></svg><b>scaleterra</b>
+    </a>
+    <div class="nav-links">
+      <a href="#proof">Proof</a>
+      <a href="#how">How it works</a>
+      <a href="#">Pricing</a>
+      <a class="btn btn-ghost" href="#book">Book a walkthrough</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="kicker rise d1"><span class="dot"></span>Ops intelligence for independent restaurants</span>
+      <h1 class="rise d1">You're already making the money. You're just <em>losing some of it.</em></h1>
+      <p class="sub rise d2">Scaleterra reads what your restaurant already runs on, sales, labor, schedules, and finds the margin quietly leaking out. Then we help you keep it. No new system to learn, no dashboard to babysit.</p>
+      <div class="cta-row rise d3">
+        <a class="btn btn-primary" href="#proof">See what we found at Messina<span aria-hidden="true">→</span></a>
+        <a class="btn btn-ghost" href="#book">Book a walkthrough</a>
+      </div>
+      <div class="proof-chip rise d4">
+        <span class="who">Messina, Las Vegas</span>
+        <span class="num">labor <s>66.8%</s> → <strong>40.9%</strong> of revenue</span>
+      </div>
+    </div>
+    <div class="hero-media rise d3">
+      <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1000&q=75"
+           alt="A plated dish handed across a warm, candlelit restaurant table during service" loading="eager" />
+      <span class="hero-tag">Real service. Real numbers.</span>
+    </div>
+  </div>
+</header>
+
+<section class="proof" id="proof">
+  <div class="wrap">
+    <h2>We didn't sell Messina a dashboard. We found them <b>$206,000</b>.</h2>
+    <p class="lead">Same revenue. Same doors open. We read their labor and sales month over month, showed the owner where the hours were going, and helped them run leaner. Fully-loaded labor fell from two-thirds of revenue to just over 40%.</p>
+
+    <div class="chart" role="img" aria-label="Monthly fully-loaded labor as a percent of revenue: January 66.8, February 45.4, March 41.6, April 44.3, May 40.9 percent">
+      <div class="bar"><span class="v">66.8%</span><span class="col" style="height:100%"></span><span class="m">Jan</span></div>
+      <div class="bar"><span class="v">45.4%</span><span class="col" style="height:68%"></span><span class="m">Feb</span></div>
+      <div class="bar"><span class="v">41.6%</span><span class="col" style="height:62%"></span><span class="m">Mar</span></div>
+      <div class="bar"><span class="v">44.3%</span><span class="col" style="height:66%"></span><span class="m">Apr</span></div>
+      <div class="bar"><span class="v">40.9%</span><span class="col" style="height:61%"></span><span class="m">May</span></div>
+    </div>
+    <p class="chart-note">Fully-loaded labor as a share of revenue. <b>Down 26 points</b> in five months, from real POS and payroll data.</p>
+  </div>
+</section>
+
+<section class="how" id="how">
+  <div class="wrap">
+    <h2>You keep running your restaurant. We watch the margin.</h2>
+    <div class="steps">
+      <div class="step">
+        <span class="n">Step 1</span>
+        <h3>Connect what you already use</h3>
+        <p>Toast, your scheduler, your reservations, your books. We plug into the tools that are already open on your laptop. Nothing new to install.</p>
+      </div>
+      <div class="step">
+        <span class="n">Step 2</span>
+        <h3>We find the leaks</h3>
+        <p>Where labor drifts past what the covers justify. Where discounts quietly stack up. The money that never shows up until the monthly close, when it's too late to act.</p>
+      </div>
+      <div class="step">
+        <span class="n">Step 3</span>
+        <h3>You keep the margin</h3>
+        <p>Plain-language calls you can act on this week, and a partner who checks the numbers with you. You see the dollars kept, not a wall of charts.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer id="book">
+  <div class="wrap">
+    <div class="foot-cta">
+      <h2>Find out what's leaking out of yours.</h2>
+      <a class="btn btn-primary" href="#">Book a 20-minute walkthrough<span aria-hidden="true">→</span></a>
+    </div>
+    <div class="foot-meta">
+      <span class="brand"><svg viewBox="0 0 48 48" width="26" height="26"><use href="#mark"/></svg><b>scaleterra</b></span>
+      <span>Grounded ops intelligence for the restaurants that feed a neighborhood.</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
