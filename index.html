@@ -170,6 +170,18 @@
   .final h2{font-size:var(--step-3); color:var(--cream); max-width:18ch; margin-inline:auto}
   .final p{margin:1.1rem auto 0; color:var(--cream-dim); max-width:44ch; font-size:var(--step-1); font-weight:400}
   .final .btn{margin-top:2rem; padding:.95rem 1.6rem; font-size:var(--step-0)}
+  .contact{max-width:520px; margin:2.2rem auto 0; display:grid; gap:.7rem; text-align:left}
+  .contact .row{display:grid; grid-template-columns:1fr 1fr; gap:.7rem}
+  .contact input, .contact textarea{width:100%; font-family:inherit; font-size:var(--step-0);
+    background:color-mix(in oklab, var(--clay-abyss) 55%, transparent); border:1px solid color-mix(in oklab,var(--cream) 20%, transparent);
+    color:var(--cream); border-radius:9px; padding:.75rem .9rem}
+  .contact input::placeholder, .contact textarea::placeholder{color:color-mix(in oklab,var(--cream) 52%, transparent)}
+  .contact textarea{min-height:92px; resize:vertical}
+  .contact button{margin-top:.3rem; padding:.85rem 1.4rem; border:none; border-radius:9px; font-family:inherit; font-weight:600;
+    font-size:var(--step-0); background:var(--ochre); color:var(--clay-abyss); cursor:pointer}
+  .contact button:disabled{opacity:.55; cursor:not-allowed}
+  .book-alt{margin-top:1.4rem; font-size:var(--step--1); color:var(--cream-dim)}
+  @media(max-width:520px){.contact .row{grid-template-columns:1fr}}
 
   footer{background:var(--clay-abyss); color:var(--cream-dim); padding:2.5rem 0}
   .foot-in{display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; font-size:var(--step--1)}
@@ -314,8 +326,19 @@
 <section class="final" id="book">
   <div class="wrap">
     <h2>Find out what's leaking out of yours.</h2>
-    <p>We'll look at one month of your numbers with you. If there's nothing worth finding, we'll tell you that too.</p>
-    <a class="btn btn-primary" href="mailto:hello@scaleterra.com?subject=Walkthrough">Book a 20-minute walkthrough<span aria-hidden="true">→</span></a>
+    <p>Tell us a bit about your business. We'll take one month of your numbers and show you what we find. If there's nothing worth finding, we'll tell you that too.</p>
+    <!-- Contact form: submission is intentionally NOT wired yet. Pending David's
+         inbox address + a form backend (Formspree/Web3Forms or mailto). -->
+    <form class="contact" onsubmit="return false;" aria-label="Request a walkthrough">
+      <div class="row">
+        <input type="text" name="name" placeholder="Your name" autocomplete="name" />
+        <input type="text" name="business" placeholder="Business name" autocomplete="organization" />
+      </div>
+      <input type="email" name="email" placeholder="Email" autocomplete="email" />
+      <textarea name="message" placeholder="What kind of business, and what feels like it's leaking?"></textarea>
+      <button type="submit" disabled title="Coming soon">Request a walkthrough</button>
+    </form>
+    <p class="book-alt">Prefer to grab a time directly? Booking link coming soon.</p>
   </div>
 </section>
 
