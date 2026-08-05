@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: #ffffff;
+  color: #101114;
+  font-family: var(--font-archivo), "Helvetica Neue", Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  color: #2fa85c;
+  text-decoration: none;
+}
+a:hover {
+  color: #101114;
+}
+
+/* Primary nav collapses on narrow screens (matches the handoff). */
+@media (max-width: 1080px) {
+  [data-nav] {
+    display: none !important;
+  }
+}
+
+/* Hover states from the handoff (style-hover) — inline styles can't express :hover. */
+.seg-row {
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.seg-row:hover {
+  border-color: #2fa85c !important;
+  background: #fafdfb;
+}
+.tier-row {
+  transition: background 0.15s ease;
+}
+.tier-row:hover {
+  background: #fafdfb;
+}
+.hover-green {
+  transition: border-color 0.15s ease;
+}
+.hover-green:hover {
+  border-color: #2fa85c !important;
+}
