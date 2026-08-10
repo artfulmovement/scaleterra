@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Nav, Footer, MONO } from "../components/Chrome";
 import { money } from "../lib/content";
+import { FUNCTIONS_URL } from "../lib/supabase";
 
 const EXPECT = [
   { no: "01", t: "You talk, we listen", d: "How the business runs, what you do by hand every week, and where the day disappears." },
@@ -11,12 +12,50 @@ const EXPECT = [
   { no: "04", t: "You decide", d: "Keep going with us or take the findings and act on them yourself. No annual contract." },
 ];
 
-const FIELDS = ["Your name", "Business name", "Email", "Locations"];
 const INDUSTRY_CHIPS = ["Restaurant", "Retail", "Salon & spa", "Insurance", "Medical & dental", "Something else"];
+
+const INPUT: React.CSSProperties = {
+  height: 44, background: "#FFFFFF", border: "1.5px solid #E2E4EA", borderRadius: 12,
+  padding: "0 13px", fontSize: 15, fontFamily: "inherit", color: "#101114", outline: "none", width: "100%",
+};
 
 export default function Contact() {
   const [ind, setInd] = useState(0);
   const [revenue, setRevenue] = useState(1800000);
+  const [name, setName] = useState("");
+  const [business, setBusiness] = useState("");
+  const [email, setEmail] = useState("");
+  const [locations, setLocations] = useState("");
+  const [note, setNote] = useState("");
+  const [website, setWebsite] = useState(""); // honeypot
+  const [status, setStatus] = useState<"idle" | "busy" | "sent" | "error">("idle");
+
+  async function submit() {
+    if (status === "busy" || status === "sent") return;
+    if (!name.trim() && !email.trim()) {
+      setStatus("error");
+      return;
+    }
+    setStatus("busy");
+    try {
+      const r = await fetch(`${FUNCTIONS_URL}/walkthrough-request`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name, business, email, locations,
+          industry: INDUSTRY_CHIPS[ind], revenue, note, website,
+        }),
+      });
+      setStatus(r.ok ? "sent" : "error");
+    } catch {
+      setStatus("error");
+    }
+  }
+
+  const submitLabel =
+    status === "sent" ? "Thanks — we'll be in touch within one business day"
+    : status === "busy" ? "Sending…"
+    : "Request my walkthrough";
 
   return (
     <div>
@@ -48,13 +87,20 @@ export default function Contact() {
             <div style={{ fontSize: 15, lineHeight: 1.55, color: "#5B5F68" }}>Nothing you send is shared. We&apos;ll come back with times and, if you want it, a general profit leak report for your sector.</div>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 16 }}>
-            {FIELDS.map((f) => (
-              <div key={f} style={{ display: "flex", flexDirection: "column", gap: 7 }}>
-                <div style={{ fontSize: 13, fontWeight: 500, color: "#6B6F78" }}>{f}</div>
-                <div style={{ height: 44, background: "#FFFFFF", border: "1.5px solid #E2E4EA", borderRadius: 12 }} />
-              </div>
+            {([
+              ["Your name", name, setName, "name"],
+              ["Business name", business, setBusiness, "organization"],
+              ["Email", email, setEmail, "email"],
+              ["Locations", locations, setLocations, "off"],
+            ] as [string, string, (v: string) => void, string][]).map(([label, val, set, ac]) => (
+              <label key={label} style={{ display: "flex", flexDirection: "column", gap: 7 }}>
+                <span style={{ fontSize: 13, fontWeight: 500, color: "#6B6F78" }}>{label}</span>
+                <input style={INPUT} value={val} onChange={(e) => set(e.target.value)} autoComplete={ac} disabled={status === "sent"} />
+              </label>
             ))}
           </div>
+          {/* Honeypot — hidden from humans, bots fill it */}
+          <input value={website} onChange={(e) => setWebsite(e.target.value)} tabIndex={-1} autoComplete="off" aria-hidden="true" style={{ position: "absolute", left: -9999, height: 1, width: 1, opacity: 0 }} />
           <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
             <div style={{ fontSize: 13, fontWeight: 500, color: "#6B6F78" }}>Industry</div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
@@ -88,12 +134,29 @@ export default function Contact() {
               <div>$250K</div><div>$10M</div>
             </div>
           </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
-            <div style={{ fontSize: 13, fontWeight: 500, color: "#6B6F78" }}>What made you look into this?</div>
-            <div style={{ height: 88, background: "#FFFFFF", border: "1.5px solid #E2E4EA", borderRadius: 12 }} />
+          <label style={{ display: "flex", flexDirection: "column", gap: 7 }}>
+            <span style={{ fontSize: 13, fontWeight: 500, color: "#6B6F78" }}>What made you look into this?</span>
+            <textarea
+              value={note} onChange={(e) => setNote(e.target.value)} disabled={status === "sent"}
+              style={{ height: 88, background: "#FFFFFF", border: "1.5px solid #E2E4EA", borderRadius: 12, padding: "10px 13px", fontSize: 15, fontFamily: "inherit", color: "#101114", outline: "none", resize: "vertical", width: "100%" }}
+            />
+          </label>
+          <div
+            onClick={submit}
+            style={{
+              fontSize: 16, fontWeight: 600, color: "#FFFFFF",
+              background: status === "sent" ? "#101114" : "#2FA85C",
+              padding: 17, borderRadius: 100, textAlign: "center",
+              cursor: status === "sent" ? "default" : "pointer",
+            }}
+          >
+            {submitLabel}
           </div>
-          {/* Submit intentionally non-wired: no backend / destination yet. */}
-          <div style={{ fontSize: 16, fontWeight: 600, color: "#FFFFFF", background: "#2FA85C", padding: 17, borderRadius: 100, textAlign: "center", cursor: "default", opacity: 0.85 }}>Request my walkthrough</div>
+          {status === "error" && (
+            <div style={{ fontSize: 13.5, lineHeight: 1.5, color: "#B4231F", textAlign: "center" }}>
+              That didn&apos;t go through — add at least a name or email and try again.
+            </div>
+          )}
           <div style={{ fontSize: 13, lineHeight: 1.5, color: "#9BA0AA", textAlign: "center" }}>We only win when you win. If there&apos;s nothing worth finding, you owe us nothing.</div>
         </div>
       </div>

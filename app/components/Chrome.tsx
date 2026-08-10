@@ -29,7 +29,7 @@ export function Nav({ active }: { active?: string }) {
           ))}
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 16, flex: "none" }}>
-          <div style={{ fontSize: 15, fontWeight: 500, color: "#3D4046", whiteSpace: "nowrap" }}>Log in</div>
+          <a href="/login/" style={{ fontSize: 15, fontWeight: 500, color: "#3D4046", whiteSpace: "nowrap" }}>Log in</a>
           <a href="/contact/" style={{ fontSize: 15, fontWeight: 600, color: "#FFFFFF", background: "#101114", padding: "12px 22px", borderRadius: 100, whiteSpace: "nowrap" }}>Book a walkthrough</a>
         </div>
       </div>
