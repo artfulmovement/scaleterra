@@ -67,17 +67,17 @@ export default function Home() {
       {/* NAV */}
       <div style={{ position: "sticky", top: 0, zIndex: 20, background: "rgba(255,255,255,0.9)", backdropFilter: "blur(10px)", borderBottom: "1px solid #EDEEF1" }}>
         <div style={{ maxWidth: 1400, margin: "0 auto", padding: "18px 44px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 40 }}>
-          <div style={{ display: "flex", flexDirection: "column", gap: 4, flex: "none" }}>
+          <a href="/" style={{ display: "flex", flexDirection: "column", gap: 4, flex: "none", color: "#101114" }}>
             <Wordmark />
             <div style={{ fontSize: 9, fontWeight: 600, letterSpacing: "0.15em", textTransform: "uppercase", color: "#6B6F78", whiteSpace: "nowrap" }}>Ops intelligence, sharpened</div>
-          </div>
+          </a>
           <div data-nav="1" style={{ display: "flex", gap: 28, fontSize: 15, fontWeight: 500, color: "#3D4046", whiteSpace: "nowrap", flex: "none" }}>
             <a href="/what-we-do/" style={{ color: "#3D4046" }}>What we do</a>
             <a href="/industries/" style={{ color: "#3D4046" }}>Industries</a>
             <a href="/results/" style={{ color: "#3D4046" }}>Results</a>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 16, flex: "none" }}>
-            <div style={{ fontSize: 15, fontWeight: 500, color: "#3D4046", whiteSpace: "nowrap" }}>Log in</div>
+            <a href="/login/" style={{ fontSize: 15, fontWeight: 500, color: "#3D4046", whiteSpace: "nowrap" }}>Log in</a>
             <a href="/contact/" style={{ fontSize: 15, fontWeight: 600, color: "#FFFFFF", background: "#101114", padding: "12px 22px", borderRadius: 100, whiteSpace: "nowrap" }}>Book a walkthrough</a>
           </div>
         </div>
