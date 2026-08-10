@@ -11,8 +11,27 @@ import {
   SEGMENTS,
   money,
 } from "./lib/content";
+import { FUNCTIONS_URL } from "./lib/supabase";
 
 const MONO = "ui-monospace,SFMono-Regular,Menlo,monospace";
+
+const FIELD_INPUT: React.CSSProperties = {
+  height: 44, background: "#FFFFFF", border: "1.5px solid #E2E4EA", borderRadius: 12,
+  padding: "0 13px", fontSize: 15, fontFamily: "inherit", color: "#101114", outline: "none", width: "100%",
+};
+
+async function postLead(payload: Record<string, unknown>): Promise<boolean> {
+  try {
+    const r = await fetch(`${FUNCTIONS_URL}/walkthrough-request`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    return r.ok;
+  } catch {
+    return false;
+  }
+}
 
 function Wordmark({ size = 22, dotSize = 33 }: { size?: number; dotSize?: number }) {
   return (
@@ -61,6 +80,40 @@ export default function Home() {
   const mid = (lo + hi) / 2;
   const leak = TICKER[tick];
   const revenueLabel = money(revenue);
+
+  // Leak-report modal form
+  const [mName, setMName] = useState("");
+  const [mBusiness, setMBusiness] = useState("");
+  const [mEmail, setMEmail] = useState("");
+  const [mLocations, setMLocations] = useState("");
+  const [mNote, setMNote] = useState("");
+  const [mStatus, setMStatus] = useState<"idle" | "busy" | "sent">("idle");
+
+  async function sendReport() {
+    if (mStatus === "sent") { setModalOpen(false); return; }
+    if (mStatus === "busy" || (!mName.trim() && !mEmail.trim())) return;
+    setMStatus("busy");
+    const ok = await postLead({
+      name: mName, business: mBusiness, email: mEmail, locations: mLocations,
+      industry: industry.label, revenue,
+      note: `[Profit leak report request] ${mNote}`.trim(),
+    });
+    setMStatus(ok ? "sent" : "idle");
+  }
+
+  // Bottom CTA form
+  const [cName, setCName] = useState("");
+  const [cBusiness, setCBusiness] = useState("");
+  const [cType, setCType] = useState("");
+  const [cContact, setCContact] = useState("");
+  const [cStatus, setCStatus] = useState<"idle" | "busy" | "sent">("idle");
+
+  async function sendCta() {
+    if (cStatus !== "idle" || (!cName.trim() && !cContact.trim())) return;
+    setCStatus("busy");
+    const ok = await postLead({ name: cName, business: cBusiness, industry: cType, email: cContact });
+    setCStatus(ok ? "sent" : "idle");
+  }
 
   return (
     <div style={{ background: "#FFFFFF", color: "#101114" }}>
@@ -214,11 +267,16 @@ export default function Home() {
             </div>
             <div style={{ padding: "26px 34px 34px", display: "flex", flexDirection: "column", gap: 18 }}>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 16 }}>
-                {["Your name", "Business name", "Email", "Locations"].map((f) => (
-                  <div key={f} style={{ display: "flex", flexDirection: "column", gap: 7 }}>
-                    <div style={{ fontSize: 13, fontWeight: 500, color: "#6B6F78" }}>{f}</div>
-                    <div style={{ height: 44, border: "1.5px solid #E2E4EA", borderRadius: 12 }} />
-                  </div>
+                {([
+                  ["Your name", mName, setMName],
+                  ["Business name", mBusiness, setMBusiness],
+                  ["Email", mEmail, setMEmail],
+                  ["Locations", mLocations, setMLocations],
+                ] as [string, string, (v: string) => void][]).map(([f, val, set]) => (
+                  <label key={f} style={{ display: "flex", flexDirection: "column", gap: 7 }}>
+                    <span style={{ fontSize: 13, fontWeight: 500, color: "#6B6F78" }}>{f}</span>
+                    <input style={FIELD_INPUT} value={val} onChange={(e) => set(e.target.value)} disabled={mStatus === "sent"} />
+                  </label>
                 ))}
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
@@ -231,11 +289,13 @@ export default function Home() {
                   <div style={{ fontSize: 14, fontWeight: 600, padding: "9px 16px", borderRadius: 100, background: "#FFFFFF", color: "#6B6F78", border: "1.5px solid #E2E4EA" }}>Something else</div>
                 </div>
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
-                <div style={{ fontSize: 13, fontWeight: 500, color: "#6B6F78" }}>Anything you already suspect is leaking</div>
-                <div style={{ height: 76, border: "1.5px solid #E2E4EA", borderRadius: 12 }} />
+              <label style={{ display: "flex", flexDirection: "column", gap: 7 }}>
+                <span style={{ fontSize: 13, fontWeight: 500, color: "#6B6F78" }}>Anything you already suspect is leaking</span>
+                <textarea value={mNote} onChange={(e) => setMNote(e.target.value)} disabled={mStatus === "sent"} style={{ height: 76, border: "1.5px solid #E2E4EA", borderRadius: 12, padding: "10px 13px", fontSize: 15, fontFamily: "inherit", color: "#101114", outline: "none", resize: "vertical", background: "#FFFFFF" }} />
+              </label>
+              <div onClick={sendReport} style={{ fontSize: 16, fontWeight: 600, color: "#FFFFFF", background: mStatus === "sent" ? "#101114" : "#2FA85C", padding: 16, borderRadius: 100, textAlign: "center", cursor: "pointer" }}>
+                {mStatus === "sent" ? "Sent — tap to close" : mStatus === "busy" ? "Sending…" : "Send my report"}
               </div>
-              <div onClick={() => setModalOpen(false)} style={{ fontSize: 16, fontWeight: 600, color: "#FFFFFF", background: "#2FA85C", padding: 16, borderRadius: 100, textAlign: "center", cursor: "pointer" }}>Send my report</div>
               <div style={{ fontSize: 13, lineHeight: 1.5, color: "#9BA0AA", textAlign: "center" }}>Arrives by email within one business day. We don&apos;t share your numbers with anyone.</div>
             </div>
           </div>
@@ -401,13 +461,23 @@ export default function Home() {
           </div>
           <div style={{ background: "#FFFFFF", borderRadius: 20, padding: 34, display: "flex", flexDirection: "column", gap: 18 }}>
             <div style={{ fontSize: 14, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", color: "#2FA85C" }}>Request a walkthrough</div>
-            {["Your name", "Business name", "Type of business", "Email or phone"].map((f) => (
-              <div key={f} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                <div style={{ fontSize: 14, fontWeight: 500, color: "#6B6F78" }}>{f}</div>
-                <div style={{ height: 1, background: "#E2E4EA" }} />
-              </div>
+            {([
+              ["Your name", cName, setCName],
+              ["Business name", cBusiness, setCBusiness],
+              ["Type of business", cType, setCType],
+              ["Email or phone", cContact, setCContact],
+            ] as [string, string, (v: string) => void][]).map(([f, val, set]) => (
+              <label key={f} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                <span style={{ fontSize: 14, fontWeight: 500, color: "#6B6F78" }}>{f}</span>
+                <input
+                  value={val} onChange={(e) => set(e.target.value)} disabled={cStatus === "sent"}
+                  style={{ border: "none", borderBottom: "1px solid #E2E4EA", padding: "2px 0 8px", fontSize: 16, fontFamily: "inherit", color: "#101114", outline: "none", width: "100%", background: "transparent" }}
+                />
+              </label>
             ))}
-            <div style={{ fontSize: 16, fontWeight: 600, color: "#FFFFFF", background: "#101114", padding: 16, borderRadius: 100, textAlign: "center", marginTop: 8 }}>Send</div>
+            <div onClick={sendCta} style={{ fontSize: 16, fontWeight: 600, color: "#FFFFFF", background: cStatus === "sent" ? "#2FA85C" : "#101114", padding: 16, borderRadius: 100, textAlign: "center", marginTop: 8, cursor: cStatus === "sent" ? "default" : "pointer" }}>
+              {cStatus === "sent" ? "Sent — we'll be in touch within one business day" : cStatus === "busy" ? "Sending…" : "Send"}
+            </div>
           </div>
         </div>
       </div>
