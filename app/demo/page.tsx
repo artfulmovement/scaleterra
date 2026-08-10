@@ -6,6 +6,10 @@ import { supabase, FUNCTIONS_URL } from "../lib/supabase";
 
 type Item = { name: string; url: string };
 
+const SHARED_EMAIL = "scaleterra@scaleterra.ai";
+// The interactive operator console (Messina duplicate on our seeded environment).
+const CONSOLE_URL = "https://smb-platform-git-feat-multitenancy-artfulmovements-projects.vercel.app/admin";
+
 function labelFor(name: string): string {
   return name
     .replace(/\.[a-z0-9]+$/i, "")
@@ -24,6 +28,12 @@ export default function Demo() {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
         setState("anon");
+        return;
+      }
+      // Partners (Google sign-in) go straight to the live interactive console;
+      // the shared credential stays on the static captures.
+      if (session.user?.email && session.user.email.toLowerCase() !== SHARED_EMAIL) {
+        window.location.href = CONSOLE_URL;
         return;
       }
       const r = await fetch(`${FUNCTIONS_URL}/demo-access`, {
